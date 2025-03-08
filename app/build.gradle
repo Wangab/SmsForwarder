@@ -85,16 +85,24 @@ android {
 
     signingConfigs {
         release {
-            keyAlias keyProps['keyAlias']
-            keyPassword keyProps['keyPassword']
-            storeFile keyProps['storeFile'] ? file(keyProps['storeFile']) : null
-            storePassword keyProps['storePassword']
+            storeFile file('/Users/jasonsg/.android/debug.keystore')
+            storePassword "android"                                                    // 默认密码
+            keyAlias "androiddebugkey"                                                 // 默认别名
+            keyPassword "android"
+//            keyAlias keyProps['keyAlias']
+//            keyPassword keyProps['keyPassword']
+//            storeFile keyProps['storeFile'] ? file(keyProps['storeFile']) : null
+//            storePassword keyProps['storePassword']
         }
         debug {
-            keyAlias keyProps['keyAlias']
-            keyPassword keyProps['keyPassword']
-            storeFile keyProps['storeFile'] ? file(keyProps['storeFile']) : null
-            storePassword keyProps['storePassword']
+            storeFile file('/Users/jasonsg/.android/debug.keystore')
+            storePassword "android"                                                    // 默认密码
+            keyAlias "androiddebugkey"                                                 // 默认别名
+            keyPassword "android"
+//            keyAlias keyProps['keyAlias']
+//            keyPassword keyProps['keyPassword']
+//            storeFile keyProps['storeFile'] ? file(keyProps['storeFile']) : null
+//            storePassword keyProps['storePassword']
         }
     }
 

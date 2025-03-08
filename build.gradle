@@ -30,7 +30,8 @@ allprojects {
         maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://repo1.maven.org/maven2/' }
         maven { url 'https://oss.sonatype.org/content/repositories/public' }
-        maven { url "https://jitpack.io" }
+        maven { url "https://www.jitpack.io" }
+        maven { url "https://maven.scijava.org/content/repositories/public" }
     }
 
     // 将构建文件统一输出到项目根目录下的 build 文件夹

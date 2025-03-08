@@ -63,6 +63,7 @@
 
                 <com.xuexiang.xui.widget.edittext.materialedittext.MaterialEditText
                     android:id="@+id/et_apiToken"
+                    android:text="@string/telegram_robot_token"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:met_passWordButton="true" />
@@ -120,6 +121,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:hint="@string/TelegramChatIdTips"
+                    android:text="@string/telegram_group_chat"
                     android:singleLine="true"
                     app:met_clearButton="true" />
 
