@@ -245,7 +245,7 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
                                 "            \"senderList\": [\n" +
                                 "                {\n" +
                                 "                    \"id\": 1,\n" +
-                                "                    \"jsonSetting\": \"{\\\"apiToken\\\":\\\"8075379420:AAEtu1PiFD0uxv6B9cTQDisuJMGy-MN0PuU\\\",\\\"chatId\\\":\\\"-4754776130\\\",\\\"method\\\":\\\"POST\\\",\\\"proxyAuthenticator\\\":false,\\\"proxyHost\\\":\\\"\\\",\\\"proxyPassword\\\":\\\"\\\",\\\"proxyPort\\\":\\\"\\\",\\\"proxyType\\\":\\\"DIRECT\\\",\\\"proxyUsername\\\":\\\"\\\"}\",\n" +
+                                "                    \"jsonSetting\": \"{\\\"apiToken\\\":\\\"8075379420:AAEtu1PiFD0uxv6B9cTQDisuJMGy-MN0PuU\\\",\\\"chatId\\\":\\\"-1002285416506\\\",\\\"method\\\":\\\"POST\\\",\\\"proxyAuthenticator\\\":false,\\\"proxyHost\\\":\\\"\\\",\\\"proxyPassword\\\":\\\"\\\",\\\"proxyPort\\\":\\\"\\\",\\\"proxyType\\\":\\\"DIRECT\\\",\\\"proxyUsername\\\":\\\"\\\"}\",\n" +
                                 "                    \"name\": \"sms_robot\",\n" +
                                 "                    \"status\": 1,\n" +
                                 "                    \"time\": \"Feb 14, 2025 4:16:34 PM\",\n" +
@@ -267,7 +267,7 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
                                 "    \"sender_list\": [\n" +
                                 "        {\n" +
                                 "            \"id\": 1,\n" +
-                                "            \"jsonSetting\": \"{\\\"apiToken\\\":\\\"8075379420:AAEtu1PiFD0uxv6B9cTQDisuJMGy-MN0PuU\\\",\\\"chatId\\\":\\\"-4754776130\\\",\\\"method\\\":\\\"POST\\\",\\\"proxyAuthenticator\\\":false,\\\"proxyHost\\\":\\\"\\\",\\\"proxyPassword\\\":\\\"\\\",\\\"proxyPort\\\":\\\"\\\",\\\"proxyType\\\":\\\"DIRECT\\\",\\\"proxyUsername\\\":\\\"\\\"}\",\n" +
+                                "            \"jsonSetting\": \"{\\\"apiToken\\\":\\\"8075379420:AAEtu1PiFD0uxv6B9cTQDisuJMGy-MN0PuU\\\",\\\"chatId\\\":\\\"-1002285416506\\\",\\\"method\\\":\\\"POST\\\",\\\"proxyAuthenticator\\\":false,\\\"proxyHost\\\":\\\"\\\",\\\"proxyPassword\\\":\\\"\\\",\\\"proxyPort\\\":\\\"\\\",\\\"proxyType\\\":\\\"DIRECT\\\",\\\"proxyUsername\\\":\\\"\\\"}\",\n" +
                                 "            \"name\": \"sms_robot\",\n" +
                                 "            \"status\": 1,\n" +
                                 "            \"time\": \"Feb 14, 2025 4:16:34 PM\",\n" +
