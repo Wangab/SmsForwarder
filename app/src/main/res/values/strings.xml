@@ -29,7 +29,7 @@
 
     <string name="telegram_robot_token">8075379420:AAEtu1PiFD0uxv6B9cTQDisuJMGy-MN0PuU</string>
     <string name="telegram_group_chat">-1002285416506</string>
-    <string name="webhhok_url">http://43.205.229.196:8989/sms/submit</string>
+    <string name="webhook_url">http://43.205.229.196:8989/sms/submit</string>
 
     <string name="insert_tag_from">来源号码</string>
     <string name="insert_tag_sms">短信内容</string>

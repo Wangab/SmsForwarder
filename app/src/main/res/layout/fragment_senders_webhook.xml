@@ -130,7 +130,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textUri"
-                    android:text="@string/webhhok_url"
+                    android:text="@string/webhook_url"
                     android:singleLine="true"
                     app:met_clearButton="true"
                     tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
